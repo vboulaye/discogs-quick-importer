@@ -1,6 +1,7 @@
 <script lang="ts">
 
 	import { enhance } from '$app/forms';
+	import { onMount } from 'svelte';
 
 	/** @type {import('./$types').PageData} */
 	export let data;
@@ -34,6 +35,8 @@
 	}
 
 	async function updateCollection(release) {
+		document.status = 'updating collection with id ' + release.id + ' release ' + release.title;
+
 		updateCollectionForm.release_id.value = release.id;
 		updateCollectionForm.collection_action.value = release.user_data.in_collection ? 'remove' : 'add';
 		updateCollectionForm.submit();
@@ -42,6 +45,23 @@
 	function isInCollection(release) {
 		return release.user_data.in_collection || lastCollectionReleases.includes(release.id);
 	}
+
+
+	$: {
+		autoSelect(form,updateCollectionForm);
+	}
+
+	function autoSelect(form,updateCollectionForm) {
+		const foundReleases = form?.searchResults?.results;
+		if (foundReleases && foundReleases.length === 1 && updateCollectionForm) {
+			updateCollection(foundReleases[0]);
+		}
+	}
+
+	onMount(() => {
+		autoSelect(form,updateCollectionForm);
+	});
+
 
 </script>
 
@@ -78,7 +98,6 @@
 
 		<table>
 			<tr>
-
 				<th style="width: 3rem">cover</th>
 				<th style="min-width: 50rem">title</th>
 				<th style="width: 3rem">year - country</th>
@@ -86,28 +105,21 @@
 				<th style="width: 3rem">labels</th>
 				<th style="width: 3rem">cat #</th>
 				<th style="width: 3rem">genres</th>
-				<!--						<th>{JSON.stringify(release)}</th>-->
-
 			</tr>
 
 			{#each form?.searchResults?.results as release}
 
-				<tr class:in-collection={isInCollection(release)} on:click={()=>updateCollection(release)}>
-
-					<!--
-					id
-					master_id
-					<td>{release.type}</td>
-					-->
-					<td><img src={release.thumb} alt="release cover" /><!--cover_image--></td>
+				<tr class:in-collection={isInCollection(release)} class="add-to-collection"
+						on:click={()=>updateCollection(release)} title="add to collection">
+					<td><img src={release.thumb} alt="release cover" /><!--cover_image-->
+						{release.id}
+					</td>
 					<td>{release.title}</td>
-					<td>{release.year} - {release.country}</td>
+					<td>{release.year} - {release.country} - {release.type}</td>
 					<td>{cleanup(release.format)}</td>
 					<td>{cleanup(release.label)}</td>
 					<td>{cleanup(release.barcode, release.catno)}  </td>
 					<td>{cleanup(release.genre, release.style)}</td>
-					<!--						<td>{JSON.stringify(release)}</td>-->
-
 				</tr>
 
 			{/each}
@@ -116,9 +128,43 @@
 	{/if}
 
 </section>
+<section>
+	<table>
+		<tr>
+
+			<th style="width: 3rem">cover</th>
+			<th style="min-width: 30rem">title</th>
+			<th style="min-width: 20rem">artist</th>
+			<th style="width: 3rem">year</th>
+			<th style="width: 3rem">formats</th>
+			<th style="width: 3rem">labels</th>
+			<th style="width: 3rem">cat #</th>
+			<th style="width: 3rem">genres</th>
+			<!--						<th>{JSON.stringify(release)}</th>-->
+
+		</tr>
+
+		{#each data?.discogsCollectionLatestReleases?.releases?.slice(0,10) as release}
+
+			<tr>
+				<td><img src={release.basic_information.thumb} alt="release cover" />
+					{release.id}
+					<!--cover_image--></td>
+				<td>{release.basic_information.title}</td>
+				<td>{release.basic_information?.artists.map(x => x.name)}</td>
+				<td>{release.basic_information.year}</td>
+				<td>{cleanup(release.basic_information.formats?.map(x => x.name))}</td>
+				<td>{cleanup(release.basic_information.labels?.map(x => x.name))}</td>
+				<td>{cleanup(release.basic_information.labels?.map(x => x.catno))}  </td>
+				<td>{cleanup(release.basic_information.genres, release.basic_information.styles)}</td>
+				<td>{release.date_added}</td>
+			</tr>
+
+		{/each}
+	</table>
+</section>
 
 <!--<pre>{JSON.stringify(data?.discogsCollectionLatestReleases,null,2)}</pre>-->
-
 
 <style>
     fieldset {
@@ -131,5 +177,13 @@
 
     .in-collection {
         background-color: aquamarine;
+    }
+
+    .add-to-collection {
+        cursor: pointer;
+    }
+
+    .add-to-collection:hover {
+        background-color: lightblue;
     }
 </style>

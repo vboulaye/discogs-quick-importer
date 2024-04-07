@@ -7,6 +7,7 @@ export async function discogsGet(options: { path: string, method?: string, body?
 	try {
 
 		const executablePath = options.path.replace('{username}', PRIVATE_DISCOGS_USER_LOGIN);
+		console.log({ executablePath })
 		const response = await options.fetch(`${PRIVATE_DISCOGS_URL}${executablePath}`, {
 			method: options.method ?? 'GET',
 			headers: {
@@ -17,10 +18,13 @@ export async function discogsGet(options: { path: string, method?: string, body?
 		});
 		const responseData = await response.json();
 		if (!response.ok) {
+
+			console.error({response})
 			throw new Error('unable to call gitlab api: ' + JSON.stringify(responseData));
 		}
 		return responseData;
 	} catch (e) {
+		console.error({e})
 		error(500, 'unable to call gitlab api: ' + JSON.stringify(e));
 	}
 }

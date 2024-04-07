@@ -9,7 +9,7 @@ export const actions = {
 	searchByBarcode: async ({ request, fetch }) => {
 		const data = await request.formData();
 		const barcode = data.get('barcode');
-		const searchResults = await discogsGet({ path: `/database/search?barcode=${barcode}`, fetch });
+		const searchResults = await discogsGet({ path: `/database/search?barcode=${barcode}&type=release`, fetch });
 		return { searchResults };
 	},
 	searchByQuery: async ({ request, fetch }) => {
