@@ -1,4 +1,6 @@
 <script lang="ts">
+	import "simpledotcss/simple.min.css";
+
 
 	/** @type {import('./$types').PageData} */
 	export let data;
@@ -21,6 +23,7 @@
 </main>
 
 <style>
+
     .image-avatar {
         width: 3rem;
         height: 3rem;
