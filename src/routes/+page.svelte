@@ -48,10 +48,10 @@
 
 
 	$: {
-		autoSelect(form,updateCollectionForm);
+		autoSelect(form, updateCollectionForm);
 	}
 
-	function autoSelect(form,updateCollectionForm) {
+	function autoSelect(form, updateCollectionForm) {
 		const foundReleases = form?.searchResults?.results;
 		if (foundReleases && foundReleases.length === 1 && updateCollectionForm) {
 			updateCollection(foundReleases[0]);
@@ -59,7 +59,7 @@
 	}
 
 	onMount(() => {
-		autoSelect(form,updateCollectionForm);
+		autoSelect(form, updateCollectionForm);
 	});
 
 
@@ -124,44 +124,48 @@
 
 			{/each}
 		</table>
-
+	{:else}
+		Please use a search form above to select releases to add to your collection
 	{/if}
 
 </section>
 <section>
-	<table>
-		<tr>
-
-			<th style="width: 3rem">cover</th>
-			<th style="min-width: 30rem">title</th>
-			<th style="min-width: 20rem">artist</th>
-			<th style="width: 3rem">year</th>
-			<th style="width: 3rem">formats</th>
-			<th style="width: 3rem">labels</th>
-			<th style="width: 3rem">cat #</th>
-			<th style="width: 3rem">genres</th>
-			<!--						<th>{JSON.stringify(release)}</th>-->
-
-		</tr>
-
-		{#each data?.discogsCollectionLatestReleases?.releases?.slice(0,10) as release}
-
+	<figure>
+		<table>
 			<tr>
-				<td><img src={release.basic_information.thumb} alt="release cover" />
-					{release.id}
-					<!--cover_image--></td>
-				<td>{release.basic_information.title}</td>
-				<td>{release.basic_information?.artists.map(x => x.name)}</td>
-				<td>{release.basic_information.year}</td>
-				<td>{cleanup(release.basic_information.formats?.map(x => x.name))}</td>
-				<td>{cleanup(release.basic_information.labels?.map(x => x.name))}</td>
-				<td>{cleanup(release.basic_information.labels?.map(x => x.catno))}  </td>
-				<td>{cleanup(release.basic_information.genres, release.basic_information.styles)}</td>
-				<td>{release.date_added}</td>
+
+				<th style="width: 3rem">cover</th>
+				<th style="min-width: 30rem">title</th>
+				<th style="min-width: 20rem">artist</th>
+				<th style="width: 2rem">year</th>
+				<th style="width: 2rem">formats</th>
+				<th style="width: 2rem">labels</th>
+				<th style="width: 2rem">cat #</th>
+				<th style="width: 2rem">genres</th>
+				<th style="width: 2rem">date added</th>
+				<!--						<th>{JSON.stringify(release)}</th>-->
+
 			</tr>
 
-		{/each}
-	</table>
+			{#each data?.discogsCollectionLatestReleases?.releases?.slice(0, 10) as release}
+
+				<tr>
+					<td><img src={release.basic_information.thumb} alt="release cover" />
+						{release.id}
+						<!--cover_image--></td>
+					<td>{release.basic_information.title}</td>
+					<td>{release.basic_information?.artists.map(x => x.name)}</td>
+					<td>{release.basic_information.year}</td>
+					<td>{cleanup(release.basic_information.formats?.map(x => x.name))}</td>
+					<td>{cleanup(release.basic_information.labels?.map(x => x.name))}</td>
+					<td>{cleanup(release.basic_information.labels?.map(x => x.catno))}  </td>
+					<td>{cleanup(release.basic_information.genres, release.basic_information.styles)}</td>
+					<td>{release.date_added}</td>
+				</tr>
+
+			{/each}
+		</table>
+	</figure>
 </section>
 
 <!--<pre>{JSON.stringify(data?.discogsCollectionLatestReleases,null,2)}</pre>-->
